@@ -1,0 +1,3 @@
+/Users/aleksandarbrozek/Documents/domaciProg/oop1Domaci/CLI/cmake-build-debug/CMakeFiles/oop1Domaci.dir
+/Users/aleksandarbrozek/Documents/domaciProg/oop1Domaci/CLI/cmake-build-debug/CMakeFiles/edit_cache.dir
+/Users/aleksandarbrozek/Documents/domaciProg/oop1Domaci/CLI/cmake-build-debug/CMakeFiles/rebuild_cache.dir

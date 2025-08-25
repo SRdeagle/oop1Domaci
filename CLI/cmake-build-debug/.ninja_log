@@ -1,0 +1,11 @@
+# ninja log v6
+2	500	1733245114217489555	CMakeFiles/oop1Domaci.dir/main.cpp.o	740cfdfbebe778f5
+1	532	1733245114216526216	CMakeFiles/oop1Domaci.dir/Parser.cpp.o	fbbcf7591f1b2559
+1	573	1733245114216865078	CMakeFiles/oop1Domaci.dir/Interpreter.cpp.o	bd954a634addb544
+4	588	1733245566486043450	CMakeFiles/oop1Domaci.dir/Echo.cpp.o	fa22fde0dcb134e6
+588	635	1733245567069654130	oop1Domaci	aa0fc59539190e8e
+9	686	1733493590505090720	CMakeFiles/oop1Domaci.dir/Touch.cpp.o	7cf4b972a1c7800b
+8	692	1733493590503858391	CMakeFiles/oop1Domaci.dir/Echo.cpp.o	fa22fde0dcb134e6
+692	766	1733493591187624839	oop1Domaci	285971d0d54d7df1
+3	622	1733497766704561397	CMakeFiles/oop1Domaci.dir/Echo.cpp.o	fa22fde0dcb134e6
+622	670	1733497767323476595	oop1Domaci	285971d0d54d7df1
