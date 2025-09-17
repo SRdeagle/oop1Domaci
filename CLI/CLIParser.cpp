@@ -1,4 +1,4 @@
-#include "Parser.h"
+#include "CLIParser.h"
 #include <sstream>
 #include "Structures.h"
 #include <vector>
@@ -10,37 +10,20 @@ void removeWhitespace(string &s, int &i)
         i++;
 }
 
-string Parser::error = "";
+string CLIParser::error = "";
 
-bool Parser::isLetter(char c)
+bool CLIParser::isLetter(char c)
 {
     return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9') || c == '/' || c == '_' || c == '-' || c == '.';
 }
 
-vector<ParsedCommand> Parser::parseCommands(const string &input)
+vector<ParsedCommand> CLIParser::parseCommands(const string &input)
 {
-    Parser::error = "";
-    string line = input;
-    char c, p = ' ';
-    int i = 0;
-    int j = -1;
+    CLIParser::error = "";
+    string line = input, buffer;
+    char c;
+    int i = 0, j = -1;
     vector<ParsedCommand> cmds;
-    string buffer;
-    enum Phase
-    {
-        COMMAND,
-        ARGUMENT,
-        OPTION,
-        REDIRECTION
-    };
-    struct State
-    {
-        bool quotation = false;
-        bool dash = false;
-        bool inRedir = false;
-        bool outRedir = false;
-        Phase phase = COMMAND;
-    };
     State state;
     while (i < line.length())
     {
@@ -51,7 +34,7 @@ vector<ParsedCommand> Parser::parseCommands(const string &input)
             i++;
         if (!isLetter(line[i]))
         {
-            Parser::error = "command must start with a letter at " + to_string(i);
+            CLIParser::error = "command must start with a letter at " + to_string(i);
             return cmds;
         }
         cmds.push_back({});
@@ -75,7 +58,7 @@ vector<ParsedCommand> Parser::parseCommands(const string &input)
                     }
                     else
                     {
-                        Parser::error = "unexpected character at " + to_string(i);
+                        CLIParser::error = "unexpected character at " + to_string(i);
                         return cmds;
                     }
                 }
@@ -89,7 +72,7 @@ vector<ParsedCommand> Parser::parseCommands(const string &input)
                 {
                     if (buffer.empty())
                     {
-                        Parser::error = "expected option at " + to_string(i);
+                        CLIParser::error = "expected option at " + to_string(i);
                         return cmds;
                     }
                     state.dash = false;
@@ -101,7 +84,7 @@ vector<ParsedCommand> Parser::parseCommands(const string &input)
                 {
                     if (i + 1 == line.length())
                     {
-                        Parser::error = "expected file name for output redirection at " + to_string(i);
+                        CLIParser::error = "expected file name for output redirection at " + to_string(i);
                         return cmds;
                     }
                     if (line[i + 1] == '>')
@@ -126,7 +109,7 @@ vector<ParsedCommand> Parser::parseCommands(const string &input)
                 {
                     if (cmds[j].command.empty())
                     {
-                        Parser::error = "pipe must follow a command at " + to_string(i);
+                        CLIParser::error = "pipe must follow a command at " + to_string(i);
                         return cmds;
                     }
                     if (!buffer.empty())
@@ -138,16 +121,16 @@ vector<ParsedCommand> Parser::parseCommands(const string &input)
                     }
                     else
                     {
-                        Parser::error = "unexpected character at " + to_string(i);
+                        CLIParser::error = "unexpected character at " + to_string(i);
                         return cmds;
                     }
                 }
 
-                else if (Parser::isLetter(c))
+                else if (CLIParser::isLetter(c))
                     buffer += c;
                 else
                 {
-                    Parser::error = "invalid syntax for command at " + to_string(i);
+                    CLIParser::error = "invalid syntax for command at " + to_string(i);
                     return cmds;
                 }
             }
@@ -159,7 +142,7 @@ vector<ParsedCommand> Parser::parseCommands(const string &input)
                     {
                         if (!cmds[j].inFile.empty())
                         {
-                            Parser::error = "input source already specified (multiple '<' or conflicting arg) at " + to_string(i);
+                            CLIParser::error = "input source already specified (multiple '<' or conflicting arg) at " + to_string(i);
                             return cmds;
                         }
                         cmds[j].inFile = buffer;
@@ -183,11 +166,6 @@ vector<ParsedCommand> Parser::parseCommands(const string &input)
                             }
                             else if (state.phase == ARGUMENT)
                             {
-                                /*if (!cmds[j].inFile.empty())
-                                {
-                                    Parser::error = "input source already specified (multiple inputs) at " + to_string(i);
-                                    return cmds;
-                                }*/
                                 cmds[j].args.push_back('*' + buffer);
                                 buffer = "";
                             }
@@ -195,7 +173,7 @@ vector<ParsedCommand> Parser::parseCommands(const string &input)
                             {
                                 if (!cmds[j].inFile.empty())
                                 {
-                                    Parser::error = "input source already specified (multiple inputs) at " + to_string(i);
+                                    CLIParser::error = "input source already specified (multiple inputs) at " + to_string(i);
                                     return cmds;
                                 }
                                 cmds[j].args.push_back('*' + buffer);
@@ -217,7 +195,7 @@ vector<ParsedCommand> Parser::parseCommands(const string &input)
                         }
                         else
                         {
-                            Parser::error = "bad input order at " + to_string(i);
+                            CLIParser::error = "bad input order at " + to_string(i);
                             return cmds;
                         }
                     }
@@ -227,7 +205,7 @@ vector<ParsedCommand> Parser::parseCommands(const string &input)
                             state.dash = true;
                         else
                         {
-                            Parser::error = "bad order at " + to_string(i);
+                            CLIParser::error = "bad order at " + to_string(i);
                             return cmds;
                         }
                     }
@@ -237,7 +215,7 @@ vector<ParsedCommand> Parser::parseCommands(const string &input)
                         {
                             if (i + 1 == line.length())
                             {
-                                Parser::error = "expected file name for output redirection at " + to_string(i);
+                                CLIParser::error = "expected file name for output redirection at " + to_string(i);
                                 return cmds;
                             }
                             if (line[i + 1] == '>')
@@ -258,7 +236,7 @@ vector<ParsedCommand> Parser::parseCommands(const string &input)
                                     cmds[j].args.push_back('*' + buffer);
                                 else
                                 {
-                                    Parser::error = "input source already specified (multiple inputs) at " + to_string(i);
+                                    CLIParser::error = "input source already specified (multiple inputs) at " + to_string(i);
                                     return cmds;
                                 }
                                 buffer = "";
@@ -279,7 +257,7 @@ vector<ParsedCommand> Parser::parseCommands(const string &input)
                             }
                             else
                             {
-                                Parser::error = "wrong order at " + to_string(i);
+                                CLIParser::error = "wrong order at " + to_string(i);
                                 return cmds;
                             }
                             state.phase = REDIRECTION;
@@ -305,7 +283,7 @@ vector<ParsedCommand> Parser::parseCommands(const string &input)
                                 }
                                 else
                                 {
-                                    Parser::error = "error at " + to_string(i);
+                                    CLIParser::error = "error at " + to_string(i);
                                     return cmds;
                                 }
                                 buffer = "";
@@ -315,7 +293,7 @@ vector<ParsedCommand> Parser::parseCommands(const string &input)
                         }
                         else
                         {
-                            Parser::error = "unexpected < at " + to_string(i);
+                            CLIParser::error = "unexpected < at " + to_string(i);
                             return cmds;
                         }
                     }
@@ -344,14 +322,14 @@ vector<ParsedCommand> Parser::parseCommands(const string &input)
                                         cmds[j].outFile = buffer;
                                     else
                                     {
-                                        Parser::error = "unexpected redirection before pipe at " + to_string(i);
+                                        CLIParser::error = "unexpected redirection before pipe at " + to_string(i);
                                         return cmds;
                                     }
                                 }
                             }
                             else
                             {
-                                Parser::error = "error before pipe at " + to_string(i);
+                                CLIParser::error = "error before pipe at " + to_string(i);
                                 return cmds;
                             }
                         }
@@ -359,16 +337,16 @@ vector<ParsedCommand> Parser::parseCommands(const string &input)
                         buffer = "";
                         if (i == line.length())
                         {
-                            Parser::error = "expected command after pipe at the end";
+                            CLIParser::error = "expected command after pipe at the end";
                             return cmds;
                         }
                         break;
                     }
-                    else if (Parser::isLetter(c))
+                    else if (CLIParser::isLetter(c))
                         buffer += c;
                     else
                     {
-                        Parser::error = "invalid syntax for command at " + to_string(i);
+                        CLIParser::error = "invalid syntax for command at " + to_string(i);
                         return cmds;
                     }
                 }
@@ -376,7 +354,7 @@ vector<ParsedCommand> Parser::parseCommands(const string &input)
         }
         // cout << (state.dash ? "dash" : "no dash") << " buffer: " << buffer << endl;
         if (state.quotation)
-            Parser::error = "expected ending \" at last word";
+            CLIParser::error = "expected ending \" at last word";
         if (state.dash)
         {
             if (state.phase == OPTION)
@@ -385,12 +363,12 @@ vector<ParsedCommand> Parser::parseCommands(const string &input)
                 if (!buffer.empty())
                     cmds[j].options.push_back(buffer);
                 else
-                    Parser::error = "expected argument after - at last word";
+                    CLIParser::error = "expected argument after - at last word";
                 buffer = "";
             }
             else
             {
-                Parser::error = "bad order at last word";
+                CLIParser::error = "bad order at last word";
                 return cmds;
             }
         }
@@ -402,7 +380,7 @@ vector<ParsedCommand> Parser::parseCommands(const string &input)
                 {
                     if (!cmds[j].inFile.empty())
                     {
-                        Parser::error = "input source already specified (multiple '<' or conflicting arg) at last word";
+                        CLIParser::error = "input source already specified (multiple '<' or conflicting arg) at last word";
                         return cmds;
                     }
                     cmds[j].inFile = buffer;
@@ -410,12 +388,12 @@ vector<ParsedCommand> Parser::parseCommands(const string &input)
                 }
                 else
                 {
-                    Parser::error = "expected redirection after < at last word";
+                    CLIParser::error = "expected redirection after < at last word";
                 }
             }
             else
             {
-                Parser::error = "bad syntax at last word";
+                CLIParser::error = "bad syntax at last word";
                 return cmds;
             }
         }
@@ -426,12 +404,12 @@ vector<ParsedCommand> Parser::parseCommands(const string &input)
                 if (!buffer.empty())
                     cmds[j].outFile = buffer;
                 else
-                    Parser::error = "expected redirection after > at last word";
+                    CLIParser::error = "expected redirection after > at last word";
                 buffer = "";
             }
             else
             {
-                Parser::error = "bad syntax at last word";
+                CLIParser::error = "bad syntax at last word";
                 return cmds;
             }
         }
@@ -445,7 +423,7 @@ vector<ParsedCommand> Parser::parseCommands(const string &input)
                     cmds[j].outFile = buffer;
                 else
                 {
-                    Parser::error = "unexpected redirection at last word";
+                    CLIParser::error = "unexpected redirection at last word";
                     return cmds;
                 }
                 buffer = "";
@@ -465,7 +443,7 @@ vector<ParsedCommand> Parser::parseCommands(const string &input)
         }
         if (cmds[j].command.empty())
         {
-            Parser::error = "missing command";
+            CLIParser::error = "missing command";
             return cmds;
         }
     }
@@ -475,7 +453,7 @@ vector<ParsedCommand> Parser::parseCommands(const string &input)
         {
             if (cmds[i].inFile != "" || cmds[i].outFile != "")
             {
-                Parser::error = "redirection not allowed for inner commands";
+                CLIParser::error = "redirection not allowed for inner commands";
                 return cmds;
             }
         }
@@ -485,23 +463,14 @@ vector<ParsedCommand> Parser::parseCommands(const string &input)
         printParsedCommands(cmds);
         if (cmds[0].outFile != "")
         {
-            Parser::error = "redirection not allowed for the first command";
+            CLIParser::error = "redirection not allowed for the first command";
             return cmds;
         }
         if (cmds[cmds.size() - 1].inFile != "")
         {
-            Parser::error = "redirection not allowed for the last command";
+            CLIParser::error = "redirection not allowed for the last command";
             return cmds;
         }
     }
     return cmds;
-}
-
-string Parser::getError()
-{
-    return Parser::error;
-}
-void Parser::resetError()
-{
-    Parser::error = "";
 }

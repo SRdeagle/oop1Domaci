@@ -49,35 +49,110 @@ cmake_ninja_workdir = /Users/aleksandarbrozek/Documents/domaciProg/oop1Domaci/CL
 
 build cmake_object_order_depends_target_oop1Domaci: phony || .
 
-build CMakeFiles/oop1Domaci.dir/Parser.cpp.o: CXX_COMPILER__oop1Domaci_unscanned_Debug /Users/aleksandarbrozek/Documents/domaciProg/oop1Domaci/CLI/Parser.cpp || cmake_object_order_depends_target_oop1Domaci
-  DEP_FILE = CMakeFiles/oop1Domaci.dir/Parser.cpp.o.d
-  FLAGS = -g -std=gnu++20 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX13.3.sdk -fcolor-diagnostics
+build CMakeFiles/oop1Domaci.dir/CLIParser.cpp.o: CXX_COMPILER__oop1Domaci_unscanned_Debug /Users/aleksandarbrozek/Documents/domaciProg/oop1Domaci/CLI/CLIParser.cpp || cmake_object_order_depends_target_oop1Domaci
+  DEP_FILE = CMakeFiles/oop1Domaci.dir/CLIParser.cpp.o.d
+  FLAGS = -g -std=c++17 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX15.2.sdk -mmacosx-version-min=15.0 -fcolor-diagnostics
+  INCLUDES = -I/Users/aleksandarbrozek/Documents/domaciProg/oop1Domaci/CLI -I/Users/aleksandarbrozek/Documents/domaciProg/oop1Domaci/CLI/CLI -I/Users/aleksandarbrozek/Documents/domaciProg/oop1Domaci/CLI/CLI/Commands
   OBJECT_DIR = CMakeFiles/oop1Domaci.dir
   OBJECT_FILE_DIR = CMakeFiles/oop1Domaci.dir
 
 build CMakeFiles/oop1Domaci.dir/Interpreter.cpp.o: CXX_COMPILER__oop1Domaci_unscanned_Debug /Users/aleksandarbrozek/Documents/domaciProg/oop1Domaci/CLI/Interpreter.cpp || cmake_object_order_depends_target_oop1Domaci
   DEP_FILE = CMakeFiles/oop1Domaci.dir/Interpreter.cpp.o.d
-  FLAGS = -g -std=gnu++20 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX13.3.sdk -fcolor-diagnostics
-  OBJECT_DIR = CMakeFiles/oop1Domaci.dir
-  OBJECT_FILE_DIR = CMakeFiles/oop1Domaci.dir
-
-build CMakeFiles/oop1Domaci.dir/Echo.cpp.o: CXX_COMPILER__oop1Domaci_unscanned_Debug /Users/aleksandarbrozek/Documents/domaciProg/oop1Domaci/CLI/Echo.cpp || cmake_object_order_depends_target_oop1Domaci
-  DEP_FILE = CMakeFiles/oop1Domaci.dir/Echo.cpp.o.d
-  FLAGS = -g -std=gnu++20 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX13.3.sdk -fcolor-diagnostics
+  FLAGS = -g -std=c++17 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX15.2.sdk -mmacosx-version-min=15.0 -fcolor-diagnostics
+  INCLUDES = -I/Users/aleksandarbrozek/Documents/domaciProg/oop1Domaci/CLI -I/Users/aleksandarbrozek/Documents/domaciProg/oop1Domaci/CLI/CLI -I/Users/aleksandarbrozek/Documents/domaciProg/oop1Domaci/CLI/CLI/Commands
   OBJECT_DIR = CMakeFiles/oop1Domaci.dir
   OBJECT_FILE_DIR = CMakeFiles/oop1Domaci.dir
 
 build CMakeFiles/oop1Domaci.dir/main.cpp.o: CXX_COMPILER__oop1Domaci_unscanned_Debug /Users/aleksandarbrozek/Documents/domaciProg/oop1Domaci/CLI/main.cpp || cmake_object_order_depends_target_oop1Domaci
   DEP_FILE = CMakeFiles/oop1Domaci.dir/main.cpp.o.d
-  FLAGS = -g -std=gnu++20 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX13.3.sdk -fcolor-diagnostics
+  FLAGS = -g -std=c++17 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX15.2.sdk -mmacosx-version-min=15.0 -fcolor-diagnostics
+  INCLUDES = -I/Users/aleksandarbrozek/Documents/domaciProg/oop1Domaci/CLI -I/Users/aleksandarbrozek/Documents/domaciProg/oop1Domaci/CLI/CLI -I/Users/aleksandarbrozek/Documents/domaciProg/oop1Domaci/CLI/CLI/Commands
   OBJECT_DIR = CMakeFiles/oop1Domaci.dir
   OBJECT_FILE_DIR = CMakeFiles/oop1Domaci.dir
 
-build CMakeFiles/oop1Domaci.dir/Touch.cpp.o: CXX_COMPILER__oop1Domaci_unscanned_Debug /Users/aleksandarbrozek/Documents/domaciProg/oop1Domaci/CLI/Touch.cpp || cmake_object_order_depends_target_oop1Domaci
-  DEP_FILE = CMakeFiles/oop1Domaci.dir/Touch.cpp.o.d
-  FLAGS = -g -std=gnu++20 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX13.3.sdk -fcolor-diagnostics
+build CMakeFiles/oop1Domaci.dir/Commands/Echo.cpp.o: CXX_COMPILER__oop1Domaci_unscanned_Debug /Users/aleksandarbrozek/Documents/domaciProg/oop1Domaci/CLI/Commands/Echo.cpp || cmake_object_order_depends_target_oop1Domaci
+  DEP_FILE = CMakeFiles/oop1Domaci.dir/Commands/Echo.cpp.o.d
+  FLAGS = -g -std=c++17 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX15.2.sdk -mmacosx-version-min=15.0 -fcolor-diagnostics
+  INCLUDES = -I/Users/aleksandarbrozek/Documents/domaciProg/oop1Domaci/CLI -I/Users/aleksandarbrozek/Documents/domaciProg/oop1Domaci/CLI/CLI -I/Users/aleksandarbrozek/Documents/domaciProg/oop1Domaci/CLI/CLI/Commands
+  OBJECT_DIR = CMakeFiles/oop1Domaci.dir
+  OBJECT_FILE_DIR = CMakeFiles/oop1Domaci.dir/Commands
+
+build CMakeFiles/oop1Domaci.dir/Commands/Touch.cpp.o: CXX_COMPILER__oop1Domaci_unscanned_Debug /Users/aleksandarbrozek/Documents/domaciProg/oop1Domaci/CLI/Commands/Touch.cpp || cmake_object_order_depends_target_oop1Domaci
+  DEP_FILE = CMakeFiles/oop1Domaci.dir/Commands/Touch.cpp.o.d
+  FLAGS = -g -std=c++17 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX15.2.sdk -mmacosx-version-min=15.0 -fcolor-diagnostics
+  INCLUDES = -I/Users/aleksandarbrozek/Documents/domaciProg/oop1Domaci/CLI -I/Users/aleksandarbrozek/Documents/domaciProg/oop1Domaci/CLI/CLI -I/Users/aleksandarbrozek/Documents/domaciProg/oop1Domaci/CLI/CLI/Commands
+  OBJECT_DIR = CMakeFiles/oop1Domaci.dir
+  OBJECT_FILE_DIR = CMakeFiles/oop1Domaci.dir/Commands
+
+build CMakeFiles/oop1Domaci.dir/StreamHandler.cpp.o: CXX_COMPILER__oop1Domaci_unscanned_Debug /Users/aleksandarbrozek/Documents/domaciProg/oop1Domaci/CLI/StreamHandler.cpp || cmake_object_order_depends_target_oop1Domaci
+  DEP_FILE = CMakeFiles/oop1Domaci.dir/StreamHandler.cpp.o.d
+  FLAGS = -g -std=c++17 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX15.2.sdk -mmacosx-version-min=15.0 -fcolor-diagnostics
+  INCLUDES = -I/Users/aleksandarbrozek/Documents/domaciProg/oop1Domaci/CLI -I/Users/aleksandarbrozek/Documents/domaciProg/oop1Domaci/CLI/CLI -I/Users/aleksandarbrozek/Documents/domaciProg/oop1Domaci/CLI/CLI/Commands
   OBJECT_DIR = CMakeFiles/oop1Domaci.dir
   OBJECT_FILE_DIR = CMakeFiles/oop1Domaci.dir
+
+build CMakeFiles/oop1Domaci.dir/Commands/Prompt.cpp.o: CXX_COMPILER__oop1Domaci_unscanned_Debug /Users/aleksandarbrozek/Documents/domaciProg/oop1Domaci/CLI/Commands/Prompt.cpp || cmake_object_order_depends_target_oop1Domaci
+  DEP_FILE = CMakeFiles/oop1Domaci.dir/Commands/Prompt.cpp.o.d
+  FLAGS = -g -std=c++17 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX15.2.sdk -mmacosx-version-min=15.0 -fcolor-diagnostics
+  INCLUDES = -I/Users/aleksandarbrozek/Documents/domaciProg/oop1Domaci/CLI -I/Users/aleksandarbrozek/Documents/domaciProg/oop1Domaci/CLI/CLI -I/Users/aleksandarbrozek/Documents/domaciProg/oop1Domaci/CLI/CLI/Commands
+  OBJECT_DIR = CMakeFiles/oop1Domaci.dir
+  OBJECT_FILE_DIR = CMakeFiles/oop1Domaci.dir/Commands
+
+build CMakeFiles/oop1Domaci.dir/Commands/Time.cpp.o: CXX_COMPILER__oop1Domaci_unscanned_Debug /Users/aleksandarbrozek/Documents/domaciProg/oop1Domaci/CLI/Commands/Time.cpp || cmake_object_order_depends_target_oop1Domaci
+  DEP_FILE = CMakeFiles/oop1Domaci.dir/Commands/Time.cpp.o.d
+  FLAGS = -g -std=c++17 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX15.2.sdk -mmacosx-version-min=15.0 -fcolor-diagnostics
+  INCLUDES = -I/Users/aleksandarbrozek/Documents/domaciProg/oop1Domaci/CLI -I/Users/aleksandarbrozek/Documents/domaciProg/oop1Domaci/CLI/CLI -I/Users/aleksandarbrozek/Documents/domaciProg/oop1Domaci/CLI/CLI/Commands
+  OBJECT_DIR = CMakeFiles/oop1Domaci.dir
+  OBJECT_FILE_DIR = CMakeFiles/oop1Domaci.dir/Commands
+
+build CMakeFiles/oop1Domaci.dir/Commands/Date.cpp.o: CXX_COMPILER__oop1Domaci_unscanned_Debug /Users/aleksandarbrozek/Documents/domaciProg/oop1Domaci/CLI/Commands/Date.cpp || cmake_object_order_depends_target_oop1Domaci
+  DEP_FILE = CMakeFiles/oop1Domaci.dir/Commands/Date.cpp.o.d
+  FLAGS = -g -std=c++17 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX15.2.sdk -mmacosx-version-min=15.0 -fcolor-diagnostics
+  INCLUDES = -I/Users/aleksandarbrozek/Documents/domaciProg/oop1Domaci/CLI -I/Users/aleksandarbrozek/Documents/domaciProg/oop1Domaci/CLI/CLI -I/Users/aleksandarbrozek/Documents/domaciProg/oop1Domaci/CLI/CLI/Commands
+  OBJECT_DIR = CMakeFiles/oop1Domaci.dir
+  OBJECT_FILE_DIR = CMakeFiles/oop1Domaci.dir/Commands
+
+build CMakeFiles/oop1Domaci.dir/Commands/Rm.cpp.o: CXX_COMPILER__oop1Domaci_unscanned_Debug /Users/aleksandarbrozek/Documents/domaciProg/oop1Domaci/CLI/Commands/Rm.cpp || cmake_object_order_depends_target_oop1Domaci
+  DEP_FILE = CMakeFiles/oop1Domaci.dir/Commands/Rm.cpp.o.d
+  FLAGS = -g -std=c++17 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX15.2.sdk -mmacosx-version-min=15.0 -fcolor-diagnostics
+  INCLUDES = -I/Users/aleksandarbrozek/Documents/domaciProg/oop1Domaci/CLI -I/Users/aleksandarbrozek/Documents/domaciProg/oop1Domaci/CLI/CLI -I/Users/aleksandarbrozek/Documents/domaciProg/oop1Domaci/CLI/CLI/Commands
+  OBJECT_DIR = CMakeFiles/oop1Domaci.dir
+  OBJECT_FILE_DIR = CMakeFiles/oop1Domaci.dir/Commands
+
+build CMakeFiles/oop1Domaci.dir/Commands/Truncate.cpp.o: CXX_COMPILER__oop1Domaci_unscanned_Debug /Users/aleksandarbrozek/Documents/domaciProg/oop1Domaci/CLI/Commands/Truncate.cpp || cmake_object_order_depends_target_oop1Domaci
+  DEP_FILE = CMakeFiles/oop1Domaci.dir/Commands/Truncate.cpp.o.d
+  FLAGS = -g -std=c++17 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX15.2.sdk -mmacosx-version-min=15.0 -fcolor-diagnostics
+  INCLUDES = -I/Users/aleksandarbrozek/Documents/domaciProg/oop1Domaci/CLI -I/Users/aleksandarbrozek/Documents/domaciProg/oop1Domaci/CLI/CLI -I/Users/aleksandarbrozek/Documents/domaciProg/oop1Domaci/CLI/CLI/Commands
+  OBJECT_DIR = CMakeFiles/oop1Domaci.dir
+  OBJECT_FILE_DIR = CMakeFiles/oop1Domaci.dir/Commands
+
+build CMakeFiles/oop1Domaci.dir/Commands/Wc.cpp.o: CXX_COMPILER__oop1Domaci_unscanned_Debug /Users/aleksandarbrozek/Documents/domaciProg/oop1Domaci/CLI/Commands/Wc.cpp || cmake_object_order_depends_target_oop1Domaci
+  DEP_FILE = CMakeFiles/oop1Domaci.dir/Commands/Wc.cpp.o.d
+  FLAGS = -g -std=c++17 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX15.2.sdk -mmacosx-version-min=15.0 -fcolor-diagnostics
+  INCLUDES = -I/Users/aleksandarbrozek/Documents/domaciProg/oop1Domaci/CLI -I/Users/aleksandarbrozek/Documents/domaciProg/oop1Domaci/CLI/CLI -I/Users/aleksandarbrozek/Documents/domaciProg/oop1Domaci/CLI/CLI/Commands
+  OBJECT_DIR = CMakeFiles/oop1Domaci.dir
+  OBJECT_FILE_DIR = CMakeFiles/oop1Domaci.dir/Commands
+
+build CMakeFiles/oop1Domaci.dir/Commands/Tr.cpp.o: CXX_COMPILER__oop1Domaci_unscanned_Debug /Users/aleksandarbrozek/Documents/domaciProg/oop1Domaci/CLI/Commands/Tr.cpp || cmake_object_order_depends_target_oop1Domaci
+  DEP_FILE = CMakeFiles/oop1Domaci.dir/Commands/Tr.cpp.o.d
+  FLAGS = -g -std=c++17 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX15.2.sdk -mmacosx-version-min=15.0 -fcolor-diagnostics
+  INCLUDES = -I/Users/aleksandarbrozek/Documents/domaciProg/oop1Domaci/CLI -I/Users/aleksandarbrozek/Documents/domaciProg/oop1Domaci/CLI/CLI -I/Users/aleksandarbrozek/Documents/domaciProg/oop1Domaci/CLI/CLI/Commands
+  OBJECT_DIR = CMakeFiles/oop1Domaci.dir
+  OBJECT_FILE_DIR = CMakeFiles/oop1Domaci.dir/Commands
+
+build CMakeFiles/oop1Domaci.dir/Commands/Head.cpp.o: CXX_COMPILER__oop1Domaci_unscanned_Debug /Users/aleksandarbrozek/Documents/domaciProg/oop1Domaci/CLI/Commands/Head.cpp || cmake_object_order_depends_target_oop1Domaci
+  DEP_FILE = CMakeFiles/oop1Domaci.dir/Commands/Head.cpp.o.d
+  FLAGS = -g -std=c++17 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX15.2.sdk -mmacosx-version-min=15.0 -fcolor-diagnostics
+  INCLUDES = -I/Users/aleksandarbrozek/Documents/domaciProg/oop1Domaci/CLI -I/Users/aleksandarbrozek/Documents/domaciProg/oop1Domaci/CLI/CLI -I/Users/aleksandarbrozek/Documents/domaciProg/oop1Domaci/CLI/CLI/Commands
+  OBJECT_DIR = CMakeFiles/oop1Domaci.dir
+  OBJECT_FILE_DIR = CMakeFiles/oop1Domaci.dir/Commands
+
+build CMakeFiles/oop1Domaci.dir/Commands/Batch.cpp.o: CXX_COMPILER__oop1Domaci_unscanned_Debug /Users/aleksandarbrozek/Documents/domaciProg/oop1Domaci/CLI/Commands/Batch.cpp || cmake_object_order_depends_target_oop1Domaci
+  DEP_FILE = CMakeFiles/oop1Domaci.dir/Commands/Batch.cpp.o.d
+  FLAGS = -g -std=c++17 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX15.2.sdk -mmacosx-version-min=15.0 -fcolor-diagnostics
+  INCLUDES = -I/Users/aleksandarbrozek/Documents/domaciProg/oop1Domaci/CLI -I/Users/aleksandarbrozek/Documents/domaciProg/oop1Domaci/CLI/CLI -I/Users/aleksandarbrozek/Documents/domaciProg/oop1Domaci/CLI/CLI/Commands
+  OBJECT_DIR = CMakeFiles/oop1Domaci.dir
+  OBJECT_FILE_DIR = CMakeFiles/oop1Domaci.dir/Commands
 
 
 # =============================================================================
@@ -87,8 +162,8 @@ build CMakeFiles/oop1Domaci.dir/Touch.cpp.o: CXX_COMPILER__oop1Domaci_unscanned_
 #############################################
 # Link the executable oop1Domaci
 
-build oop1Domaci: CXX_EXECUTABLE_LINKER__oop1Domaci_Debug CMakeFiles/oop1Domaci.dir/Parser.cpp.o CMakeFiles/oop1Domaci.dir/Interpreter.cpp.o CMakeFiles/oop1Domaci.dir/Echo.cpp.o CMakeFiles/oop1Domaci.dir/main.cpp.o CMakeFiles/oop1Domaci.dir/Touch.cpp.o
-  FLAGS = -g -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX13.3.sdk
+build oop1Domaci: CXX_EXECUTABLE_LINKER__oop1Domaci_Debug CMakeFiles/oop1Domaci.dir/CLIParser.cpp.o CMakeFiles/oop1Domaci.dir/Interpreter.cpp.o CMakeFiles/oop1Domaci.dir/main.cpp.o CMakeFiles/oop1Domaci.dir/Commands/Echo.cpp.o CMakeFiles/oop1Domaci.dir/Commands/Touch.cpp.o CMakeFiles/oop1Domaci.dir/StreamHandler.cpp.o CMakeFiles/oop1Domaci.dir/Commands/Prompt.cpp.o CMakeFiles/oop1Domaci.dir/Commands/Time.cpp.o CMakeFiles/oop1Domaci.dir/Commands/Date.cpp.o CMakeFiles/oop1Domaci.dir/Commands/Rm.cpp.o CMakeFiles/oop1Domaci.dir/Commands/Truncate.cpp.o CMakeFiles/oop1Domaci.dir/Commands/Wc.cpp.o CMakeFiles/oop1Domaci.dir/Commands/Tr.cpp.o CMakeFiles/oop1Domaci.dir/Commands/Head.cpp.o CMakeFiles/oop1Domaci.dir/Commands/Batch.cpp.o
+  FLAGS = -g -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX15.2.sdk -mmacosx-version-min=15.0
   OBJECT_DIR = CMakeFiles/oop1Domaci.dir
   POST_BUILD = :
   PRE_LINK = :

@@ -1,13 +1,17 @@
 #pragma once
 #include <string>
 #include <vector>
-#include "Structures.h"
+#include "../Structures.h"
 using namespace std;
 
-class Command {
+class Command
+{
 public:
-    virtual void execute(ParsedCommand cmd) = 0;
+    virtual string execute(Invocation &inv) = 0;
     virtual ~Command() = default;
+
+private:
+    vector<string> args;
+    vector<string> options;
+    IO io;
 };
-
-

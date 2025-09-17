@@ -1,7 +1,10 @@
 #pragma once
 #include "Command.h"
+#include "../Structures.h"
 using namespace std;
-class Date : public Command {
+
+class Date : public Command
+{
 public:
-    void execute(ParsedCommand cmd) override;
+    string execute(Invocation &inv) override;
 };

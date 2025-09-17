@@ -1,17 +1,28 @@
 cmake_minimum_required(VERSION 3.30)
 project(oop1Domaci)
 
-set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
 
 add_executable(oop1Domaci
-        Command.h
-        Interpreter.h
-        Parser.cpp
-        Echo.h
+        CLIParser.cpp
         Interpreter.cpp
-        Parser.h
-        Structures.h
-        Echo.cpp
         main.cpp
-        Touch.cpp
-        Time.h)
+        Commands/Echo.cpp
+        Commands/Touch.cpp
+        StreamHandler.cpp
+        Commands/Prompt.cpp
+        Commands/Time.cpp
+        Commands/Date.cpp
+        Commands/Rm.cpp
+        Commands/Truncate.cpp
+        Commands/Wc.cpp
+        Commands/Tr.cpp
+        Commands/Head.cpp
+        Commands/Batch.cpp)
+target_include_directories(oop1Domaci PRIVATE
+        ${CMAKE_SOURCE_DIR}
+        ${CMAKE_SOURCE_DIR}/CLI
+        ${CMAKE_SOURCE_DIR}/CLI/Commands
+)

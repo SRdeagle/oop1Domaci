@@ -49,8 +49,8 @@ cmake_ninja_workdir = /Users/aleksandarbrozek/Documents/domaciProg/oop1Domaci/cm
 
 build cmake_object_order_depends_target_oop1Domaci: phony || .
 
-build CMakeFiles/oop1Domaci.dir/CLI/Parser.cpp.o: CXX_COMPILER__oop1Domaci_unscanned_Debug /Users/aleksandarbrozek/Documents/domaciProg/oop1Domaci/CLI/Parser.cpp || cmake_object_order_depends_target_oop1Domaci
-  DEP_FILE = CMakeFiles/oop1Domaci.dir/CLI/Parser.cpp.o.d
+build CMakeFiles/oop1Domaci.dir/CLI/CLIParser.cpp.o: CXX_COMPILER__oop1Domaci_unscanned_Debug /Users/aleksandarbrozek/Documents/domaciProg/oop1Domaci/CLI/CLIParser.cpp || cmake_object_order_depends_target_oop1Domaci
+  DEP_FILE = CMakeFiles/oop1Domaci.dir/CLI/CLIParser.cpp.o.d
   FLAGS = -g -std=gnu++20 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX13.3.sdk -fcolor-diagnostics
   OBJECT_DIR = CMakeFiles/oop1Domaci.dir
   OBJECT_FILE_DIR = CMakeFiles/oop1Domaci.dir/CLI
@@ -81,7 +81,7 @@ build CMakeFiles/oop1Domaci.dir/CLI/main.cpp.o: CXX_COMPILER__oop1Domaci_unscann
 #############################################
 # Link the executable oop1Domaci
 
-build oop1Domaci: CXX_EXECUTABLE_LINKER__oop1Domaci_Debug CMakeFiles/oop1Domaci.dir/CLI/Parser.cpp.o CMakeFiles/oop1Domaci.dir/CLI/Interpreter.cpp.o CMakeFiles/oop1Domaci.dir/CLI/Echo.cpp.o CMakeFiles/oop1Domaci.dir/CLI/main.cpp.o
+build oop1Domaci: CXX_EXECUTABLE_LINKER__oop1Domaci_Debug CMakeFiles/oop1Domaci.dir/CLI/CLIParser.cpp.o CMakeFiles/oop1Domaci.dir/CLI/Interpreter.cpp.o CMakeFiles/oop1Domaci.dir/CLI/Echo.cpp.o CMakeFiles/oop1Domaci.dir/CLI/main.cpp.o
   FLAGS = -g -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX13.3.sdk
   OBJECT_DIR = CMakeFiles/oop1Domaci.dir
   POST_BUILD = :

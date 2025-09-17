@@ -1,8 +1,9 @@
 #pragma once
 #include "Command.h"
-#include "Structures.h"
+#include "../Structures.h"
 using namespace std;
-class Touch : public Command {
-  public:
-    void execute(ParsedCommand cmd) override;
+class Touch : public Command
+{
+public:
+  string execute(Invocation &inv) override;
 };

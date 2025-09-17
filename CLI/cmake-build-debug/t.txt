@@ -1,0 +1,2 @@
+echo "radi batch"
+touch batchh.txt
