@@ -64,6 +64,8 @@ string Wc::execute(Invocation &inv)
 
     (*inv.out) << count;
     inv.out->flush();
+    if (inv.out == &cout)
+        cout << endl;
 
     return "";
 }

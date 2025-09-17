@@ -79,6 +79,8 @@ string Tr::execute(Invocation &inv)
 
     *inv.out << content;
     inv.out->flush();
+    if (inv.in != &cin && inv.out == &cout)
+        cout << endl;
 
     // If we allocated stringstream for quoted string argument, delete it
     if ((*inv.args).size() == 3 && !((*inv.args)[0].empty() || (*inv.args)[0][0] == '*'))

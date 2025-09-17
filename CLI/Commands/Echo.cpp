@@ -18,6 +18,9 @@ string Echo::execute(Invocation &inv)
     if (inv.args && inv.args->size() > 1)
         return "Error - too many arguments";
 
+    if (inv.in != &cin && inv.args && inv.args->size())
+        return "Error - multiple inputs specified for echo";
+
     // Nema argumenata → prosleđuj input na output
     if (!inv.args || inv.args->empty())
     {
@@ -28,6 +31,10 @@ string Echo::execute(Invocation &inv)
             buffer << line << '\n';
         }
         (*inv.out) << buffer.str();
+        if (inv.out == &cout && inv.in != &cin)
+        {
+            (*inv.out) << endl;
+        }
         inv.out->flush();
         if (inv.in == &cin)
         {
@@ -38,8 +45,11 @@ string Echo::execute(Invocation &inv)
 
     if ((*inv.args)[0][0] != '*')
     {
-        cout << "nije * " << (*inv.args)[0] << endl;
         (*inv.out) << (*inv.args)[0];
+        if (inv.out == &cout)
+        {
+            (*inv.out) << endl;
+        }
         inv.out->flush();
         return "";
     }
@@ -53,6 +63,10 @@ string Echo::execute(Invocation &inv)
         while (file.get(ch))
         {
             (*inv.out) << ch;
+        }
+        if (inv.out == &cout && inv.in != &cin)
+        {
+            (*inv.out) << endl;
         }
         inv.out->flush();
         return "";

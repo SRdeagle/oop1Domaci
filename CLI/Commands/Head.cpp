@@ -73,12 +73,30 @@ string Head::execute(Invocation &inv)
 
     string line;
     int lineCount = 0;
-    while (lineCount < count && getline(*input, line))
+    if (input == &cin)
     {
-        *inv.out << line << "\n";
-        lineCount++;
+        ostringstream buffer;
+        while (getline(*input, line))
+        {
+            if (lineCount < count)
+            {
+                buffer << line << "\n";
+                lineCount++;
+            }
+        }
+        *inv.out << buffer.str();
+        inv.out->flush();
+        cin.clear();
     }
-    inv.out->flush();
+    else
+    {
+        while (lineCount < count && getline(*input, line))
+        {
+            *inv.out << line << "\n";
+            lineCount++;
+        }
+        inv.out->flush();
+    }
 
     return "";
 }

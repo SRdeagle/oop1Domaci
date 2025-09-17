@@ -17,6 +17,435 @@ bool CLIParser::isLetter(char c)
     return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9') || c == '/' || c == '_' || c == '-' || c == '.';
 }
 
+// --- Helper functions extracted from parseCommands ---
+bool CLIParser::handleQuotation(char c, State &state, string &buffer, ParsedCommand &cmd, int i, string &error)
+{
+    if (c == '"')
+    {
+        // End of quotation
+        // Next char must be end or separator
+        state.quotation = false;
+        cmd.args.push_back(buffer);
+        buffer = "";
+        return true;
+    }
+    else
+    {
+        buffer += c;
+        return true;
+    }
+}
+
+bool CLIParser::handleDash(char c, State &state, string &buffer, ParsedCommand &cmd, int &i, const string &line, string &error)
+{
+    if (c == ' ' || c == '\t')
+    {
+        if (buffer.empty())
+        {
+            error = "expected option at " + to_string(i);
+            return false;
+        }
+        state.dash = false;
+        cmd.options.push_back(buffer);
+        buffer = "";
+        removeWhitespace(const_cast<string &>(line), i);
+    }
+    else if (c == '>' && !state.outRedir)
+    {
+        if (i + 1 == line.length())
+        {
+            error = "expected file name for output redirection at " + to_string(i);
+            return false;
+        }
+        if (line[i + 1] == '>')
+        {
+            cmd.append = true;
+            i++;
+        }
+        state.outRedir = true;
+        state.phase = REDIRECTION;
+        cmd.options.push_back(buffer);
+        buffer = "";
+    }
+    else if (c == '<' && !state.inRedir)
+    {
+        state.inRedir = true;
+        cmd.options.push_back(buffer);
+        buffer = "";
+        state.phase = REDIRECTION;
+    }
+    else if (c == '|')
+    {
+        if (cmd.command.empty())
+        {
+            error = "pipe must follow a command at " + to_string(i);
+            return false;
+        }
+        if (!buffer.empty())
+        {
+            cmd.options.push_back(buffer);
+            buffer = "";
+            i++;
+            // break will be handled by parseCommands
+            return false; // signal to break
+        }
+        else
+        {
+            error = "unexpected character at " + to_string(i);
+            return false;
+        }
+    }
+    else if (CLIParser::isLetter(c))
+        buffer += c;
+    else
+    {
+        error = "invalid syntax for command at " + to_string(i);
+        return false;
+    }
+    return true;
+}
+
+bool CLIParser::HandleRest(char c, State &state, string &buffer, ParsedCommand &cmd, int &i, const string &line, string &error)
+{
+    if (c == ' ' || c == '\t')
+    {
+        cout << "usao u slucaj za space " << buffer << endl;
+        if (state.inRedir && !buffer.empty())
+        {
+            if (!cmd.inFile.empty())
+            {
+                error = "input source already specified (multiple '<' or conflicting arg) at " + to_string(i);
+                return false;
+            }
+            cmd.inFile = buffer;
+            buffer = "";
+        }
+        else if (state.outRedir && !buffer.empty())
+        {
+            cmd.outFile = buffer;
+            buffer = "";
+        }
+        else
+        {
+            if (!buffer.empty())
+            {
+                if (state.phase == COMMAND)
+                {
+                    cmd.command = buffer;
+                    state.phase = OPTION;
+                    buffer = "";
+                }
+                else if (state.phase == ARGUMENT)
+                {
+                    cmd.args.push_back('*' + buffer);
+                    buffer = "";
+                }
+                else
+                {
+                    if (!cmd.inFile.empty())
+                    {
+                        error = "input source already specified (multiple inputs) at " + to_string(i);
+                        return false;
+                    }
+                    cmd.args.push_back('*' + buffer);
+                    buffer = "";
+                    state.phase = ARGUMENT;
+                }
+            }
+        }
+        removeWhitespace(const_cast<string &>(line), i);
+    }
+    else
+    {
+        if (c == '"')
+        {
+            if (state.phase == ARGUMENT || state.phase == OPTION)
+            {
+                state.quotation = true;
+                state.phase = ARGUMENT;
+            }
+            else
+            {
+                error = "bad input order at " + to_string(i);
+                return false;
+            }
+        }
+        else if (c == '-')
+        {
+            if (state.phase == OPTION)
+                state.dash = true;
+            else
+            {
+                error = "bad order at " + to_string(i);
+                return false;
+            }
+        }
+        else if (c == '>' && !state.outRedir)
+        {
+            if (state.phase == ARGUMENT || state.phase == OPTION || state.phase == REDIRECTION)
+            {
+                if (i + 1 == line.length())
+                {
+                    error = "expected file name for output redirection at " + to_string(i);
+                    return false;
+                }
+                if (line[i + 1] == '>')
+                {
+                    cmd.append = true;
+                    i++;
+                    state.outRedir = true;
+                    state.phase = REDIRECTION;
+                    return true;
+                }
+                if (!buffer.empty())
+                {
+                    if (cmd.inFile.empty() && state.inRedir)
+                        cmd.inFile = buffer;
+                    else if (state.phase == ARGUMENT)
+                        cmd.args.push_back('*' + buffer);
+                    else
+                    {
+                        error = "input source already specified (multiple inputs) at " + to_string(i);
+                        return false;
+                    }
+                    buffer = "";
+                }
+                state.outRedir = true;
+                state.phase = REDIRECTION;
+            }
+            else
+            {
+                if (!buffer.empty())
+                {
+                    cmd.command = buffer;
+                    buffer = "";
+                    state.outRedir = true;
+                    state.phase = REDIRECTION;
+                }
+                else
+                {
+                    error = "wrong order at " + to_string(i);
+                    return false;
+                }
+                state.phase = REDIRECTION;
+                state.outRedir = true;
+            }
+        }
+        else if (c == '<')
+        {
+            if (!state.inRedir)
+            {
+                if (!buffer.empty())
+                {
+                    if (cmd.command.empty() && state.phase == COMMAND)
+                        cmd.command = buffer;
+                    else if (state.phase == ARGUMENT || state.phase == OPTION)
+                    {
+                        cmd.args.push_back('*' + buffer);
+                        buffer = "";
+                    }
+                    else if (state.phase == REDIRECTION && cmd.outFile.empty())
+                    {
+                        cmd.outFile = buffer;
+                    }
+                    else
+                    {
+                        error = "error at " + to_string(i);
+                        return false;
+                    }
+                    buffer = "";
+                }
+                state.inRedir = true;
+                state.phase = REDIRECTION;
+            }
+            else
+            {
+                error = "unexpected < at " + to_string(i);
+                return false;
+            }
+        }
+        else if (c == '|')
+        {
+            if (!buffer.empty())
+            {
+                if (cmd.command.empty())
+                    cmd.command = buffer;
+                else if (state.phase == ARGUMENT || state.phase == OPTION)
+                {
+                    cmd.args.push_back('*' + buffer);
+                    buffer = "";
+                }
+                else if (state.phase == REDIRECTION)
+                {
+                    if (state.outRedir)
+                        cmd.outFile = buffer;
+                    else if (state.inRedir)
+                        cmd.inFile = buffer;
+                    else
+                    {
+                        if (cmd.inFile.empty())
+                            cmd.inFile = buffer;
+                        else if (cmd.outFile.empty())
+                            cmd.outFile = buffer;
+                        else
+                        {
+                            error = "unexpected redirection before pipe at " + to_string(i);
+                            return false;
+                        }
+                    }
+                }
+                else
+                {
+                    error = "error before pipe at " + to_string(i);
+                    return false;
+                }
+            }
+            i++;
+            buffer = "";
+            if (i == line.length())
+            {
+                error = "expected command after pipe at the end";
+                return false;
+            }
+            return false; // signal to break
+        }
+        else if (CLIParser::isLetter(c))
+            buffer += c;
+        else
+        {
+            error = "invalid syntax for command at " + to_string(i);
+            return false;
+        }
+    }
+    return true;
+}
+
+bool CLIParser::finalizeCommand(State &state, string &buffer, ParsedCommand &cmd, string &error)
+{
+    if (state.quotation)
+        error = "expected ending \" at last word";
+    if (state.dash)
+    {
+        if (state.phase == OPTION)
+        {
+            if (!buffer.empty())
+                cmd.options.push_back(buffer);
+            else
+                error = "expected argument after - at last word";
+            buffer = "";
+        }
+        else
+        {
+            error = "bad order at last word";
+            return false;
+        }
+    }
+    if (state.inRedir && !state.outRedir)
+    {
+        if (state.phase == OPTION || state.phase == ARGUMENT || state.phase == REDIRECTION)
+        {
+            if (!buffer.empty())
+            {
+                if (!cmd.inFile.empty())
+                {
+                    error = "input source already specified (multiple '<' or conflicting arg) at last word";
+                    return false;
+                }
+                cmd.inFile = buffer;
+                buffer = "";
+            }
+            else if (cmd.inFile.empty())
+            {
+                error = "expected redirection after < at last word";
+            }
+        }
+        else
+        {
+            error = "bad syntax at last word";
+            return false;
+        }
+    }
+    if (state.outRedir && !state.inRedir)
+    {
+        if (state.phase == OPTION || state.phase == ARGUMENT || state.phase == REDIRECTION)
+        {
+            if (!buffer.empty())
+                cmd.outFile = buffer;
+            else if (cmd.outFile.empty())
+                error = "expected redirection after > at last word";
+            buffer = "";
+        }
+        else
+        {
+            error = "bad syntax at last word";
+            return false;
+        }
+    }
+    if (state.inRedir && state.outRedir)
+    {
+        if (!buffer.empty())
+        {
+            if (cmd.inFile.empty())
+                cmd.inFile = buffer;
+            else if (cmd.outFile.empty())
+                cmd.outFile = buffer;
+            else
+            {
+                error = "unexpected redirection at last word";
+                return false;
+            }
+            buffer = "";
+        }
+    }
+    if (!buffer.empty() && !state.inRedir && !state.outRedir && !state.dash && state.phase == COMMAND)
+    {
+        if (cmd.command.empty())
+            cmd.command = buffer;
+        else
+            cmd.args.push_back(buffer);
+    }
+    else if (!buffer.empty())
+    {
+        cmd.args.push_back('*' + buffer);
+    }
+    if (cmd.command.empty())
+    {
+        error = "missing command";
+        return false;
+    }
+    return true;
+}
+
+bool CLIParser::validatePipeline(vector<ParsedCommand> &cmds, string &error)
+{
+    if (cmds.size() >= 3)
+    {
+        for (int i = 1; i <= cmds.size() - 2; i++)
+        {
+            if (cmds[i].inFile != "" || cmds[i].outFile != "")
+            {
+                error = "redirection not allowed for inner commands";
+                return false;
+            }
+        }
+    }
+    if (cmds.size() >= 2)
+    {
+        printParsedCommands(cmds);
+        if (cmds[0].outFile != "")
+        {
+            error = "redirection not allowed for the first command";
+            return false;
+        }
+        if (cmds[cmds.size() - 1].inFile != "")
+        {
+            error = "redirection not allowed for the last command";
+            return false;
+        }
+    }
+    return true;
+}
+
 vector<ParsedCommand> CLIParser::parseCommands(const string &input)
 {
     CLIParser::error = "";
@@ -44,9 +473,10 @@ vector<ParsedCommand> CLIParser::parseCommands(const string &input)
         for (; i < line.length(); i++)
         {
             c = line[i];
-            // cout << c << endl;
+            bool cont = true;
             if (state.quotation)
             {
+                // Only allow closing " if next char is separator or end
                 if (c == '"')
                 {
                     if (i + 1 == line.length() || line[i + 1] == ' ' || line[i + 1] == '\t' || line[i + 1] == '|' || line[i + 1] == '>' || line[i + 1] == '<')
@@ -62,415 +492,58 @@ vector<ParsedCommand> CLIParser::parseCommands(const string &input)
                         return cmds;
                     }
                 }
-
                 else
+                {
                     buffer += c;
+                }
             }
             else if (state.dash)
             {
-                if (c == ' ' || c == '\t')
+                string err;
+                cont = handleDash(c, state, buffer, cmds[j], i, line, err);
+                if (!cont)
                 {
-                    if (buffer.empty())
+                    if (!err.empty())
                     {
-                        CLIParser::error = "expected option at " + to_string(i);
+                        CLIParser::error = err;
                         return cmds;
-                    }
-                    state.dash = false;
-                    cmds[j].options.push_back(buffer);
-                    buffer = "";
-                    removeWhitespace(line, i);
-                }
-                else if (c == '>' && !state.outRedir)
-                {
-                    if (i + 1 == line.length())
-                    {
-                        CLIParser::error = "expected file name for output redirection at " + to_string(i);
-                        return cmds;
-                    }
-                    if (line[i + 1] == '>')
-                    {
-                        cmds[j].append = true;
-                        i++;
-                    }
-
-                    state.outRedir = true;
-                    state.phase = REDIRECTION;
-                    cmds[j].options.push_back(buffer);
-                    buffer = "";
-                }
-                else if (c == '<' && !state.inRedir)
-                {
-                    state.inRedir = true;
-                    cmds[j].options.push_back(buffer);
-                    buffer = "";
-                    state.phase = REDIRECTION;
-                }
-                else if (c == '|')
-                {
-                    if (cmds[j].command.empty())
-                    {
-                        CLIParser::error = "pipe must follow a command at " + to_string(i);
-                        return cmds;
-                    }
-                    if (!buffer.empty())
-                    {
-                        cmds[j].options.push_back(buffer);
-                        buffer = "";
-                        i++;
-                        break;
                     }
                     else
-                    {
-                        CLIParser::error = "unexpected character at " + to_string(i);
-                        return cmds;
-                    }
-                }
-
-                else if (CLIParser::isLetter(c))
-                    buffer += c;
-                else
-                {
-                    CLIParser::error = "invalid syntax for command at " + to_string(i);
-                    return cmds;
+                        break; // break inner for loop for pipe
                 }
             }
             else
             {
-                if (c == ' ' || c == '\t')
+                string err;
+                cont = HandleRest(c, state, buffer, cmds[j], i, line, err);
+                if (!cont)
                 {
-                    if (state.inRedir && !buffer.empty())
+                    if (!err.empty())
                     {
-                        if (!cmds[j].inFile.empty())
-                        {
-                            CLIParser::error = "input source already specified (multiple '<' or conflicting arg) at " + to_string(i);
-                            return cmds;
-                        }
-                        cmds[j].inFile = buffer;
-                        buffer = "";
-                    }
-                    else if (state.outRedir && !buffer.empty())
-                    {
-                        cmds[j].outFile = buffer;
-                        buffer = "";
+                        CLIParser::error = err;
+                        return cmds;
                     }
                     else
-                    {
-                        if (!buffer.empty())
-                        {
-                            if (state.phase == COMMAND)
-
-                            {
-                                cmds[j].command = buffer; // first word -> command name
-                                state.phase = OPTION;
-                                buffer = "";
-                            }
-                            else if (state.phase == ARGUMENT)
-                            {
-                                cmds[j].args.push_back('*' + buffer);
-                                buffer = "";
-                            }
-                            else
-                            {
-                                if (!cmds[j].inFile.empty())
-                                {
-                                    CLIParser::error = "input source already specified (multiple inputs) at " + to_string(i);
-                                    return cmds;
-                                }
-                                cmds[j].args.push_back('*' + buffer);
-                                buffer = "";
-                                state.phase = ARGUMENT;
-                            }
-                        }
-                    }
-                    removeWhitespace(line, i);
-                }
-                else
-                {
-                    if (c == '"')
-                    {
-                        if (state.phase == ARGUMENT || state.phase == OPTION)
-                        {
-                            state.quotation = true;
-                            state.phase = ARGUMENT;
-                        }
-                        else
-                        {
-                            CLIParser::error = "bad input order at " + to_string(i);
-                            return cmds;
-                        }
-                    }
-                    else if (c == '-')
-                    {
-                        if (state.phase == OPTION)
-                            state.dash = true;
-                        else
-                        {
-                            CLIParser::error = "bad order at " + to_string(i);
-                            return cmds;
-                        }
-                    }
-                    else if (c == '>' && !state.outRedir)
-                    {
-                        if (state.phase == ARGUMENT || state.phase == OPTION || state.phase == REDIRECTION)
-                        {
-                            if (i + 1 == line.length())
-                            {
-                                CLIParser::error = "expected file name for output redirection at " + to_string(i);
-                                return cmds;
-                            }
-                            if (line[i + 1] == '>')
-                            {
-                                cmds[j].append = true;
-                                i++;
-                                state.outRedir = true;
-                                state.phase = REDIRECTION;
-                                continue;
-                            }
-
-                            if (!buffer.empty())
-                            {
-
-                                if (cmds[j].inFile.empty() && state.inRedir)
-                                    cmds[j].inFile = buffer;
-                                else if (state.phase == ARGUMENT)
-                                    cmds[j].args.push_back('*' + buffer);
-                                else
-                                {
-                                    CLIParser::error = "input source already specified (multiple inputs) at " + to_string(i);
-                                    return cmds;
-                                }
-                                buffer = "";
-                            }
-
-                            state.outRedir = true;
-                            state.phase = REDIRECTION;
-                        }
-                        else
-                        {
-                            if (!buffer.empty())
-                            {
-                                cmds[j].command = buffer;
-                                buffer = "";
-                                state.outRedir = true;
-                                state.phase = REDIRECTION;
-                                // cout << "buffer: " << buffer << endl;
-                            }
-                            else
-                            {
-                                CLIParser::error = "wrong order at " + to_string(i);
-                                return cmds;
-                            }
-                            state.phase = REDIRECTION;
-                            state.outRedir = true;
-                        }
-                    }
-                    else if (c == '<')
-                    {
-                        if (!state.inRedir)
-                        {
-                            if (!buffer.empty())
-                            {
-                                if (cmds[j].command.empty() && state.phase == COMMAND)
-                                    cmds[j].command = buffer;
-                                else if (state.phase == ARGUMENT || state.phase == OPTION)
-                                {
-                                    cmds[j].args.push_back('*' + buffer);
-                                    buffer = "";
-                                }
-                                else if (state.phase == REDIRECTION && cmds[j].outFile.empty())
-                                {
-                                    cmds[j].outFile = buffer;
-                                }
-                                else
-                                {
-                                    CLIParser::error = "error at " + to_string(i);
-                                    return cmds;
-                                }
-                                buffer = "";
-                            }
-                            state.inRedir = true;
-                            state.phase = REDIRECTION;
-                        }
-                        else
-                        {
-                            CLIParser::error = "unexpected < at " + to_string(i);
-                            return cmds;
-                        }
-                    }
-                    else if (c == '|')
-                    {
-                        if (!buffer.empty())
-                        {
-                            if (cmds[j].command.empty())
-                                cmds[j].command = buffer;
-                            else if (state.phase == ARGUMENT || state.phase == OPTION)
-                            {
-                                cmds[j].args.push_back('*' + buffer);
-                                buffer = "";
-                            }
-                            else if (state.phase == REDIRECTION)
-                            {
-                                if (state.outRedir)
-                                    cmds[j].outFile = buffer;
-                                else if (state.inRedir)
-                                    cmds[j].inFile = buffer;
-                                else
-                                {
-                                    if (cmds[j].inFile.empty())
-                                        cmds[j].inFile = buffer;
-                                    else if (cmds[j].outFile.empty())
-                                        cmds[j].outFile = buffer;
-                                    else
-                                    {
-                                        CLIParser::error = "unexpected redirection before pipe at " + to_string(i);
-                                        return cmds;
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                CLIParser::error = "error before pipe at " + to_string(i);
-                                return cmds;
-                            }
-                        }
-                        i++;
-                        buffer = "";
-                        if (i == line.length())
-                        {
-                            CLIParser::error = "expected command after pipe at the end";
-                            return cmds;
-                        }
-                        break;
-                    }
-                    else if (CLIParser::isLetter(c))
-                        buffer += c;
-                    else
-                    {
-                        CLIParser::error = "invalid syntax for command at " + to_string(i);
-                        return cmds;
-                    }
+                        break; // break inner for loop for pipe
                 }
             }
         }
-        // cout << (state.dash ? "dash" : "no dash") << " buffer: " << buffer << endl;
-        if (state.quotation)
-            CLIParser::error = "expected ending \" at last word";
-        if (state.dash)
+        string err;
+        if (!finalizeCommand(state, buffer, cmds[j], err))
         {
-            if (state.phase == OPTION)
-
-            {
-                if (!buffer.empty())
-                    cmds[j].options.push_back(buffer);
-                else
-                    CLIParser::error = "expected argument after - at last word";
-                buffer = "";
-            }
-            else
-            {
-                CLIParser::error = "bad order at last word";
-                return cmds;
-            }
-        }
-        if (state.inRedir && !state.outRedir)
-        {
-            if (state.phase == OPTION || state.phase == ARGUMENT || state.phase == REDIRECTION)
-            {
-                if (!buffer.empty())
-                {
-                    if (!cmds[j].inFile.empty())
-                    {
-                        CLIParser::error = "input source already specified (multiple '<' or conflicting arg) at last word";
-                        return cmds;
-                    }
-                    cmds[j].inFile = buffer;
-                    buffer = "";
-                }
-                else
-                {
-                    CLIParser::error = "expected redirection after < at last word";
-                }
-            }
-            else
-            {
-                CLIParser::error = "bad syntax at last word";
-                return cmds;
-            }
-        }
-        if (state.outRedir && !state.inRedir)
-        {
-            if (state.phase == OPTION || state.phase == ARGUMENT || state.phase == REDIRECTION)
-            {
-                if (!buffer.empty())
-                    cmds[j].outFile = buffer;
-                else
-                    CLIParser::error = "expected redirection after > at last word";
-                buffer = "";
-            }
-            else
-            {
-                CLIParser::error = "bad syntax at last word";
-                return cmds;
-            }
-        }
-        if (state.inRedir && state.outRedir)
-        {
-            if (!buffer.empty())
-            {
-                if (cmds[j].inFile.empty())
-                    cmds[j].inFile = buffer;
-                else if (cmds[j].outFile.empty())
-                    cmds[j].outFile = buffer;
-                else
-                {
-                    CLIParser::error = "unexpected redirection at last word";
-                    return cmds;
-                }
-                buffer = "";
-            }
-        }
-
-        if (!buffer.empty() && !state.inRedir && !state.outRedir && !state.dash && state.phase == COMMAND)
-        {
-            if (cmds[j].command.empty())
-                cmds[j].command = buffer;
-            else
-                cmds[j].args.push_back(buffer);
-        }
-        else if (!buffer.empty())
-        {
-            cmds[j].args.push_back('*' + buffer);
-        }
-        if (cmds[j].command.empty())
-        {
-            CLIParser::error = "missing command";
+            CLIParser::error = err;
             return cmds;
         }
+        if (!err.empty())
+            CLIParser::error = err;
+        if (!CLIParser::error.empty())
+            return cmds;
     }
-    if (cmds.size() >= 3)
+    string err;
+    if (!validatePipeline(cmds, err))
     {
-        for (int i = 1; i <= cmds.size() - 2; i++)
-        {
-            if (cmds[i].inFile != "" || cmds[i].outFile != "")
-            {
-                CLIParser::error = "redirection not allowed for inner commands";
-                return cmds;
-            }
-        }
-    }
-    if (cmds.size() >= 2)
-    {
-        printParsedCommands(cmds);
-        if (cmds[0].outFile != "")
-        {
-            CLIParser::error = "redirection not allowed for the first command";
-            return cmds;
-        }
-        if (cmds[cmds.size() - 1].inFile != "")
-        {
-            CLIParser::error = "redirection not allowed for the last command";
-            return cmds;
-        }
+        CLIParser::error = err;
+        return cmds;
     }
     return cmds;
 }
